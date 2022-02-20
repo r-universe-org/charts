@@ -86,6 +86,7 @@ function makechart(universe, max, imsize){
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
+        animation: false,
         plugins : {
           legend: false,
           title: {
@@ -130,7 +131,21 @@ function makechart(universe, max, imsize){
         }
       }
     });
+
+    /* Hacks to force rendering pictures because of bugs in chrome/chartjs */
+    const render_delayed = debounce(() => render_avatars(myChart))
+    $(window).resize(render_delayed);
+    render_delayed();
+
   });
+}
+
+function debounce(func, timeout = 500){
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  };
 }
 
 makechart('ropensci', 100)
